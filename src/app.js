@@ -15,4 +15,19 @@ app.use(express.static('public'))
 
 app.use(cookieParser())
 
-export default app
+//routes
+import userRouter from './routes/user.routes.js'
+
+// routes declaration
+app.use('/api/v1/users', userRouter)
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(err.status || err.statusCode || 500).json({
+    success: false,
+    message: err.message || 'Internal Server Error',
+  });
+});
+
+export {app}
