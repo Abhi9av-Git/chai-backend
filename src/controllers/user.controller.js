@@ -1,5 +1,5 @@
 import {asyncHandler} from '../utils/asyncHandler.js';
-import {ApiError} from '../utils.ApiError.js'
+import {ApiError} from '../utils/ApiError.js'
 import {User} from "../models/user.model.js"
 import {uploadOnCloudinary} from "../utils/cloudinary.js"
 import {ApiResponse} from '../utils/ApiResponse.js'
@@ -16,8 +16,8 @@ const registerUser= asyncHandler(async(req, res)=> {
   //9 return response (res)
 
   // 1
-  const {fullname, email, username, password}=req.body
-  console.log("email", email);
+  const {fullName, email, username, password}=req.body
+  //console.log("email", email);
 
   //2 
   if (fullName==="") {
@@ -48,16 +48,23 @@ const registerUser= asyncHandler(async(req, res)=> {
     throw new ApiError(409, "User already exists with the given email or username")
   }
 
+  console.log(req.files);
+
   //4
   const avatarLocalPath=req.files?.avatar[0]?.path;
-  const coverImageLocalPath=req.files?.coverImage[0]?.path;
+  // const coverImageLocalPath=req.files?.coverImage[0]?.path;
+
+  let coverImageLocalPath;
+  if (req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length>0) {
+    coverImageLocalPath=req.files.coverImage[0].path
+  }
 
   if (!avatarLocalPath) {
     throw new ApiError(400, "Avatar image is required")
   }
 
   //5
-  const avatar=await uploadOnCloudinary(avatarLocalPat)
+  const avatar=await uploadOnCloudinary(avatarLocalPath)
   const coverImage=await uploadOnCloudinary(coverImageLocalPath)
 
   if (!avatar) {
@@ -65,10 +72,10 @@ const registerUser= asyncHandler(async(req, res)=> {
   }
 
   //6
-  const user=await user.create({
-    fullname,
+  const user=await User.create({
+    fullName,
     email,
-    username: username.toLowercase(),
+    username: username.toLowerCase(),
     avatar: avatar.url, // no need for secure_url in avatar as it is already checked
     coverImage: coverImage?.url || "",
     password
