@@ -481,10 +481,6 @@ const getWatchHistory=asyncHandler(async(req, res)=> {
   )
 })
 
-const getPlaylists=asyncHandler(async(req, res)=> {
-
-})
-
 export {
   registerUser, 
   loginUser, 
