@@ -178,8 +178,8 @@ const logoutUser=asyncHandler(async(req, res)=> {
   //1 get user id from request
   await User.findByIdAndUpdate(req.user._id, 
     {
-      $set: {
-        refreshToken: undefined
+      $unset: {
+        refreshToken: 1 // this removes the field from document
       }
     },
     {
@@ -427,7 +427,7 @@ const getUserChannelProfile=asyncHandler(async(req, res)=> {
   )
 })
 
-const getWatchHistory= asynchandler(async(req, res)=> {
+const getWatchHistory=asyncHandler(async(req, res)=> {
   const user= await User.aggregate([
     {
       $match: {
@@ -479,6 +479,10 @@ const getWatchHistory= asynchandler(async(req, res)=> {
       "Watch history fetched successfully"
     )
   )
+})
+
+const getPlaylists=asyncHandler(async(req, res)=> {
+
 })
 
 export {
